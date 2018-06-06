@@ -3,4 +3,9 @@ node_modules
 .DS_store
 .vscode
 
+build/*.js
+build/static
+
+dist
+
 .env
