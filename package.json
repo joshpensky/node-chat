@@ -1,0 +1,27 @@
+{
+  "name": "node-chat",
+  "version": "0.1.0",
+  "description": "Demonstrating Websockets with node.js",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_ENV=production node index.js",
+    "dev": "NODE_ENV=development nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshpensky/node-chat.git"
+  },
+  "author": "Josh Pensky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joshpensky/node-chat/issues"
+  },
+  "homepage": "https://github.com/joshpensky/node-chat#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "compression": "^1.7.2",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "morgan": "^1.9.0"
+  }
+}
