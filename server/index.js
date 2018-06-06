@@ -30,8 +30,8 @@ const wss = new WebSocket.Server({ server });
 wss.on('connection', ws => {
   ws.on('message', msg => {
     console.log(`received ${msg}`);
-    console.log(except);
     wss.clients.forEach(client => {
+      console.log(ws)
       if (client !== ws) client.send(msg)
     });
   });
