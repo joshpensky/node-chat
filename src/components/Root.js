@@ -4,6 +4,7 @@ import { ConnectedRouter as Router } from 'react-router-redux';
 import store, { history } from 'store';
 import { Route, Switch } from 'react-router-dom';
 import { Home } from 'pages';
+import { WSProvider } from 'components';
 import { Main } from 'style';
 import 'style/global';
 
@@ -17,11 +18,13 @@ const MainRoute = props => {
 
 const Root = () => (
   <Provider store={store}>
-    <Router history={history}>
-      <Switch>
-        <MainRoute exact path="/" component={Home} />
-      </Switch>
-    </Router>
+    <WSProvider>
+      <Router history={history}>
+        <Switch>
+          <MainRoute exact path="/" component={Home} />
+        </Switch>
+      </Router>
+    </WSProvider>
   </Provider>
 );
 
