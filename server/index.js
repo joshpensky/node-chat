@@ -28,14 +28,8 @@ const server = http.createServer(app);
 
 const wss = new WebSocket.Server({ server });
 
-const noop = () => {};
-
-const heartbeat = () => {
-  this.isAlive = true;
-}
-
-wss.broadcast = function broadcast(data) {
-  wss.clients.forEach(function each(client) {
+wss.broadcast = data => {
+  wss.clients.forEach(client => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(data);
     }
@@ -81,7 +75,9 @@ const toggleTyping = (ws, typing) => {
 wss.on('connection', ws => {
   ws.id = uuid.v4();
   ws.isAlive = true;
-  //ws.on('ping', heartbeat);
+  ws.on('ping', () => {
+    this.isAlive = true;
+  });
   ws.on('message', msg => {
     var actions =  JSON.parse(msg);
     if (!Array.isArray(actions)) {
@@ -111,14 +107,16 @@ wss.on('connection', ws => {
   }));
 })
 
-const interval = setInterval(() => {
+const noop = () => {};
+
+/*const interval = setInterval(() => {
   wss.clients.forEach(ws => {
     if (ws.isAlive === false) return ws.terminate();
 
     ws.isAlive = false;
     ws.ping(noop);
   });
-}, 30000);
+}, 30000);*/
 
 server.listen(process.env.PORT || 4000, () => {
   console.log(`Server started on port ${server.address().port}`);

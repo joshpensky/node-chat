@@ -14,24 +14,24 @@ const Container = styled.section`
   box-sizing: border-box;
 `;
 
-function omniMap(arr, callback) {
+Array.prototype.omniMap = function(callback) {
   var result = [];
   var last = null;
   var next = null;
-  for (var i = 0; i < arr.length; i++) {
-    next = arr.length > (i + 1) ? arr[i + 1] : null;
-    result.push(callback(i, last, arr[i], next));
-    last = arr[i];
+  for (var i = 0; i < this.length; i++) {
+    next = this.length > (i + 1) ? this[i + 1] : null;
+    result.push(callback(i, last, this[i], next));
+    last = this[i];
   }
   return result;
 }
 
 class MessageLog extends Component {
   render() {
-    const { typers } = this.props;
+    const { typers, log } = this.props;
     return (
       <Container>
-        {omniMap(this.props.log, (i, last, msg, next) => {
+        {log.omniMap((i, last, msg, next) => {
           const { data, ...metaData } = msg;
           const continuedLast = last !== null ? (last.from === msg.from) : false,
                 continuedNext = next !== null ? (next.from === msg.from) : false;
