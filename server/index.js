@@ -31,7 +31,6 @@ wss.on('connection', ws => {
   ws.on('message', msg => {
     console.log(`received ${msg}`);
     wss.clients.forEach(client => {
-      console.log(ws)
       if (client !== ws) client.send(msg)
     });
   });
