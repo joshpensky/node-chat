@@ -1,4 +1,5 @@
 /* messages */
+export const MESSAGE_DELIVERED = 'MESSAGE_DELIVERED';
 export const RECEIVE_MESSAGE = 'RECEIVE_MESSAGE';
 export const SEND_MESSAGE = 'SEND_MESSAGE';
 export const TOGGLE_TYPING = 'TOGGLE_TYPING';

@@ -36,6 +36,8 @@ Array.prototype.omniMap = function(callback) {
   return result;
 }
 
+const CONTINUE_EXPIRE = 1000 * 30;
+
 class MessageLog extends Component {
   constructor(props) {
     super(props);
@@ -74,15 +76,15 @@ class MessageLog extends Component {
         <List innerRef={r => this.list = r}>
           {this.props.log.omniMap((i, last, msg, next) => {
             const { data, ...metaData } = msg,
-                  continuedLast = last !== null ? (last.from === msg.from) : false,
-                  continuedNext = next !== null ? (next.from === msg.from) : false;
+                  chainedLast = last === null ? false : last.from === msg.from && this.props.history[msg.from][msg.created_at].chained,
+                  chainedNext = next === null ? false : next.from === msg.from && this.props.history[next.from][next.created_at].chained;
             return (
               <Message
                 key={i}
                 {...metaData}
-                continuedLast={continuedLast}
-                continuedNext={continuedNext}
-                clientSent={msg.received_at === undefined}
+                chainedLast={chainedLast}
+                chainedNext={chainedNext}
+                clientSent={msg.from === this.props.userId}
                 >
                 {data}
               </Message>
@@ -106,10 +108,12 @@ MessageLog.propTypes = {
 
 const mapStateToProps = state => ({
   ws: state.websockets.ws,
+  history: state.messages.history,
   log: state.messages.log,
   logCount: state.messages.log.length,
-  typers: state.messages.users,
+  typers: Array.from(state.messages.typers),
   offset: state.messages.sendbarHeight,
+  userId: state.websockets.id,
 });
 
 export default connect(

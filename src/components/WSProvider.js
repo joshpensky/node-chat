@@ -1,6 +1,7 @@
 import React, { Children, Component } from 'react';
 import { connect } from 'react-redux';
-import { receiveMessage, updateTypers } from 'actions/messages';
+import PropTypes from 'prop-types';
+import { receiveMessage, updateTypers, messageDelivered } from 'actions/messages';
 import { registerUser } from 'actions/websockets';
 
 class WSProvider extends Component {
@@ -12,6 +13,8 @@ class WSProvider extends Component {
           return this.props.registerUser(action.payload);
         case 'RECEIVE_MESSAGE':
           return this.props.receiveMessage(action.payload);
+        case 'MESSAGE_DELIVERED':
+          return this.props.messageDelivered(action.payload);
         case 'USER_TYPING':
           return this.props.updateTypers(action.payload);
         default:
@@ -29,6 +32,10 @@ class WSProvider extends Component {
   }
 }
 
+WSProvider.propTypes = {
+  ws: PropTypes.object.isRequired,
+};
+
 const mapStateToProps = state => ({
   ws: state.websockets.ws,
 });
@@ -39,5 +46,6 @@ export default connect(
     receiveMessage,
     registerUser,
     updateTypers,
-  }
+    messageDelivered,
+  },
 )(WSProvider);

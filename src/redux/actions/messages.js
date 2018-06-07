@@ -1,4 +1,11 @@
-import { RECEIVE_MESSAGE, SEND_MESSAGE, TOGGLE_TYPING, UPDATE_TYPERS, UPDATE_SENDBAR_HEIGHT } from 'actions/types';
+import {
+  MESSAGE_DELIVERED,
+  RECEIVE_MESSAGE,
+  SEND_MESSAGE,
+  TOGGLE_TYPING,
+  UPDATE_TYPERS,
+  UPDATE_SENDBAR_HEIGHT
+} from 'actions/types';
 
 export const updateSendBarHeight = height => (dispatch, getState) => {
   dispatch({
@@ -47,3 +54,10 @@ export const updateTypers = typeData => dispatch => {
     payload: typeData,
   })
 };
+
+export const messageDelivered = message => dispatch => {
+  dispatch({
+    type: MESSAGE_DELIVERED,
+    payload: message,
+  });
+}

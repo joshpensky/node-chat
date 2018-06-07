@@ -3,7 +3,7 @@ import styled, { extend } from 'styled-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { sendMessage, toggleTyping, updateSendBarHeight } from 'actions/messages';
-import { bgGray, blue, disabled, fontSize, outlineGray, radiusMd, radiusLg, systemFont, white } from 'style/constants';
+import { bgGray, blue, disabled, fontSize, outlineGray, radiusMd, radiusLg, latoFont, white } from 'style/constants';
 import { newlineResolver } from 'utils';
 
 const Container = styled.section`
@@ -35,10 +35,11 @@ const TextBox = styled.textarea`
   padding: 8px 12px;
   padding-right: 42px;
   box-sizing: border-box;
-  line-height: 20px;
+  line-height: 18px;
+  vertical-align: middle;
   font-size: ${fontSize};
   height: ${props => props.height}px;
-  font-family: ${systemFont};
+  font-family: ${latoFont};
   resize: none;
   overflow: hidden;
   caret-color: ${blue};
@@ -54,9 +55,10 @@ const ShadowInput = styled.div`
   padding: 8px 12px;
   padding-right: 42px;
   box-sizing: border-box;
-  font-family: ${systemFont};
+  font-family: ${latoFont};
   font-size: ${fontSize};
-  line-height: 20px;
+  line-height: 18px;
+  vertical-align: middle;
   min-height: ${props => props.minHeight}px;
   pointer-events: none;
   word-wrap: break-word;
@@ -117,12 +119,13 @@ class SendBar extends Component {
     super(props);
     this.state = {
       message: '',
-      defaultHeight: 40,
-      height: 40,
+      defaultHeight: 38,
+      height: 38,
       scrollbarPresent: false,
       fontSize: parseInt(fontSize),
     };
 
+    this.timeout = null;
     this.sendMessage = this.sendMessage.bind(this);
     this.updateMessage = this.updateMessage.bind(this);
     this.newLineHandler = this.newLineHandler.bind(this);
@@ -130,9 +133,10 @@ class SendBar extends Component {
   }
 
   componentDidMount() {
+    const { message } = this.state;
     this.textBox.focus();
-    const newLines = JSON.stringify(this.state.message).split(/\r\n|\r|\n/).length;
-    this.updateHeight(this.state.height + (this.state.message.length > 0 ? this.state.fontSize * newLines : 0));
+    const newLines = JSON.stringify(message).split(/\r\n|\r|\n/).length;
+    this.updateHeight(this.state.height + (message.length <= 0 ? 0 : this.state.fontSize * newLines));
   }
 
   sendMessage(e) {
@@ -140,8 +144,9 @@ class SendBar extends Component {
     const { message } = this.state;
     if (message.trim().length > 0) {
       clearTimeout(this.timeout);
-      this.timeout = undefined;
+      this.timeout = null;
       const msg = {
+        from: this.props.userId,
         data: message,
         created_at: Date.now().toString(),
       };
@@ -167,12 +172,13 @@ class SendBar extends Component {
     const { value } = e.target;
     if (value.trim().length <= 0) {
       clearTimeout(this.timeout);
-      this.timeout = undefined;
-      if (this.props.typing) {
+      this.timeout = setTimeout(() => {
+        this.timeout = null;
         this.props.toggleTyping(false);
-      }
+      }, 500);
       this.updateHeight(this.state.defaultHeight);
-    } else if (!this.props.typing && this.timeout === undefined) {
+    } else if (!this.props.typing && this.timeout === null) {
+      clearTimeout(this.timeout);
       this.timeout = setTimeout(() => {
         this.timeout = null;
         this.props.toggleTyping(true);
@@ -204,6 +210,7 @@ class SendBar extends Component {
   }
 
   render() {
+    const { message } = this.state;
     return (
       <Container innerRef={r => this.container = r}>
         <Wrapper>
@@ -212,17 +219,17 @@ class SendBar extends Component {
             minHeight={this.state.defaultHeight}
             scrollbarPresent={this.state.scrollbarPresent}
             >
-            {newlineResolver(this.state.message)}
+            {newlineResolver(message)}
           </ShadowInput>
           <TextBox
             innerRef={r => this.textBox = r}
             placeholder="Web Message"
-            value={this.state.message}
+            value={message}
             onChange={this.updateMessage}
             onKeyDown={this.newLineHandler}
             height={this.state.height}
             />
-          <Submit onClick={this.sendMessage} clickable={this.state.message.trim().length > 0}>
+          <Submit onClick={this.sendMessage} clickable={message.trim().length > 0}>
             <Arrow />
           </Submit>
         </Wrapper>
@@ -237,6 +244,7 @@ SendBar.propTypes = {
 
 const mapStateToProps = state => ({
   typing: state.messages.typing,
+  userId: state.websockets.id,
 })
 
 export default connect(

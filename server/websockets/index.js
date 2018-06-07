@@ -16,6 +16,8 @@ module.exports = (server) => {
 
   wss.on('connection', ws => {
     ws.id = uuid.v4();
+    ws.history = [];
+    ws.typing = false;
     ws.isAlive = true;
     ws.on('ping', () => {
       this.isAlive = true;

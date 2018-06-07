@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { black, bgGray, outlineGray, radiusMd, radiusSm, systemFont, white } from 'style/constants';
+import { black, bgGray, outlineGray, radiusMd, radiusSm, latoFont, white } from 'style/constants';
 
 const Container = styled.div.attrs({
   className: 'type-indicator',
@@ -9,7 +9,7 @@ const Container = styled.div.attrs({
   flex-direction: row;
   align-self: flex-start;
   box-sizing: border-box;
-  padding: 8px 14px;
+  padding: 7px 14px;
   margin-bottom: 2px;
   color: ${props => props.clientSent ? white : black};
   background-color: ${bgGray};
@@ -46,7 +46,7 @@ const Dot = styled.div`
   height: 10px;
   background-color: ${outlineGray};
   margin: 4px 0;
-  margin-right: 6px;
+  margin-right: 5px;
   border-radius: 50%;
   animation: ${dotPulse} 1s ${props => props.delay}s ease-in-out infinite;
 
