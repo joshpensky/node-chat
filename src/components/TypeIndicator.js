@@ -46,7 +46,7 @@ const Dot = styled.div`
   height: 10px;
   background-color: ${outlineGray};
   margin: 4px 0;
-  margin-right: 8px;
+  margin-right: 6px;
   border-radius: 50%;
   animation: ${dotPulse} 1s ${props => props.delay}s ease-in-out infinite;
 

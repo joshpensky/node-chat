@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { receiveMessage } from 'actions/messages';
 import { registerUser } from 'actions/websockets';
 import { Message, TypeIndicator } from 'components';
@@ -18,8 +19,8 @@ const List = styled.ul`
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 20px 15px;
-  padding-bottom: 8px;
+  padding: 15px;
+  padding-bottom: 3px;
   box-sizing: border-box;
 `
 
@@ -38,6 +39,10 @@ Array.prototype.omniMap = function(callback) {
 class MessageLog extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      offset: this.props.offset,
+      logCount: this.props.logCount,
+    };
     
     this.bottomScroll = this.bottomScroll.bind(this);
   }
@@ -47,6 +52,15 @@ class MessageLog extends Component {
     this.observer.observe(this.list, {
       childList: true,
     });
+  }
+  
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.offset !== this.state.offset || nextProps.logCount !== this.state.logCount) {
+      this.setState({
+        offset: nextProps.offset,
+        logCount: nextProps.logCount
+      }, this.bottomScroll);
+    }
   }
 
   bottomScroll() {
@@ -59,8 +73,8 @@ class MessageLog extends Component {
       <Container innerRef={r => this.container = r} offset={this.props.offset}>
         <List innerRef={r => this.list = r}>
           {this.props.log.omniMap((i, last, msg, next) => {
-            const { data, ...metaData } = msg;
-            const continuedLast = last !== null ? (last.from === msg.from) : false,
+            const { data, ...metaData } = msg,
+                  continuedLast = last !== null ? (last.from === msg.from) : false,
                   continuedNext = next !== null ? (next.from === msg.from) : false;
             return (
               <Message
@@ -82,9 +96,18 @@ class MessageLog extends Component {
   }
 }
 
+MessageLog.propTypes = {
+  ws: PropTypes.object.isRequired,
+  log: PropTypes.array.isRequired,
+  logCount: PropTypes.number.isRequired,
+  typers: PropTypes.array.isRequired,
+  offset: PropTypes.number.isRequired,
+};
+
 const mapStateToProps = state => ({
   ws: state.websockets.ws,
   log: state.messages.log,
+  logCount: state.messages.log.length,
   typers: state.messages.users,
   offset: state.messages.sendbarHeight,
 });

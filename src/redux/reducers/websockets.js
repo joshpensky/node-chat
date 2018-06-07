@@ -1,6 +1,6 @@
 import { CONNECT_TO_SERVER, REGISTER_USER } from 'actions/types';
 
-const ws = new WebSocket('ws://localhost:4000');
+const ws = new WebSocket('ws://localhost:3001');
 
 const initialState ={
   ws,

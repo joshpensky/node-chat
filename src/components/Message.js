@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import styled, { css } from 'styled-components';
-import { black, radiusMd, radiusSm, systemFont, white } from 'style/constants';
+import { bgGray, black, blue, fontSize, radiusMd, radiusSm, systemFont, white } from 'style/constants';
 import { newlineResolver } from 'utils';
 
 const Container = styled.li`
@@ -8,15 +8,15 @@ const Container = styled.li`
   flex-direction: column;
   width: 100%;
   align-items: flex-${props => props.clientSent ? 'end': 'start'};
-  margin-bottom: ${props => props.continuedNext ? '2px' : '6px'};
+  margin-bottom: ${props => props.continuedNext ? '2px' : '4px'};
 `;
 
 const Bubble = styled.div`
   max-width: 75%;
-  padding: 8px 12px;
+  padding: 6px 12px 8px;
   box-sizing: border-box;
   color: ${props => props.clientSent ? white : black};
-  background-color: ${props => props.clientSent ? '#0000ff' : '#e6e6e6'};
+  background-color: ${props => props.clientSent ? blue : bgGray};
   border-radius: ${radiusMd};
   ${props => (props.continuedLast || props.continuedNext) && css`
     border-top-${props => props.clientSent ? 'right': 'left'}-radius: ${radiusSm};
@@ -25,8 +25,8 @@ const Bubble = styled.div`
     border-bottom-${props => props.clientSent ? 'right': 'left'}-radius: ${radiusSm};
   `}
   font-family: ${systemFont};
-  font-size: 16px;
-  line-height: 18px;
+  font-size: ${fontSize};
+  line-height: 20px;
   vertical-align: top;
 `;
 
@@ -53,9 +53,9 @@ class Message extends Component {
           >
           {newlineResolver(this.props.children)}
         </Bubble>
-        {(clientSent && !continuedNext) && <SubMessage>Delivered</SubMessage>}
+        {/*(clientSent && !continuedNext) && <SubMessage>Delivered</SubMessage>*/}
       </Container>
-    )
+    );
   }
 }
 

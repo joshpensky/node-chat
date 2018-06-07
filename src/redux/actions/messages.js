@@ -18,7 +18,7 @@ export const sendMessage = message => (dispatch, getState) => {
       type: TOGGLE_TYPING,
       payload: false,
     };
-    ws.send(JSON.stringify([msgAction, typeAction]));
+    ws.send(JSON.stringify([msgAction, typeAction]), { mask: true });
     dispatch(msgAction);
     dispatch(typeAction);
   }
@@ -37,7 +37,7 @@ export const toggleTyping = typing => (dispatch, getState) => {
     type: TOGGLE_TYPING,
     payload: typing
   };
-  ws.send(JSON.stringify(action));
+  ws.send(JSON.stringify(action), { mask: true });
   dispatch(action)
 };
 
