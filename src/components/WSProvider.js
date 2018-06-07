@@ -33,6 +33,10 @@ class WSProvider extends Component {
 }
 
 WSProvider.propTypes = {
+  messageDelivered: PropTypes.func.isRequired,
+  receiveMessage: PropTypes.func.isRequired,
+  registerUser: PropTypes.func.isRequired,
+  updateTypers: PropTypes.func.isRequired,
   ws: PropTypes.object.isRequired,
 };
 
@@ -43,9 +47,9 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   {
+    messageDelivered,
     receiveMessage,
     registerUser,
     updateTypers,
-    messageDelivered,
   },
 )(WSProvider);

@@ -9,7 +9,7 @@ const Container = styled.div.attrs({
   flex-direction: row;
   align-self: flex-start;
   box-sizing: border-box;
-  padding: 7px 14px;
+  padding: 7px 12px;
   margin-bottom: 2px;
   color: ${props => props.clientSent ? white : black};
   background-color: ${bgGray};

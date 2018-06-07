@@ -3,7 +3,7 @@ import styled, { extend } from 'styled-components';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { sendMessage, toggleTyping, updateSendBarHeight } from 'actions/messages';
-import { bgGray, blue, disabled, fontSize, outlineGray, radiusMd, radiusLg, latoFont, white } from 'style/constants';
+import { blue, disabled, fontSize, outlineGray, radiusMd, radiusLg, latoFont, white } from 'style/constants';
 import { newlineResolver } from 'utils';
 
 const Container = styled.section`
@@ -13,8 +13,6 @@ const Container = styled.section`
   width: 100%;
   box-sizing: border-box;
   padding: 10px 15px;
-  //background-color: ${bgGray};
-  //border-top: 1px solid ${outlineGray};
 `;
 
 const Wrapper = styled.div`
@@ -26,28 +24,27 @@ const Wrapper = styled.div`
 
 const TextBox = styled.textarea`
   width: 100%;
-  border: 1px solid ${outlineGray};
-  background-color: ${white};
-  border-radius: ${radiusMd};
-  border-top-right-radius: ${radiusLg};
-  border-bottom-right-radius: ${radiusLg};
-  outline: none;
+  height: ${props => props.height}px;
+  resize: none;
+  overflow: hidden;
   padding: 8px 12px;
   padding-right: 42px;
   box-sizing: border-box;
+  font-family: ${latoFont};
+  font-size: ${fontSize};
   line-height: 18px;
   vertical-align: middle;
-  font-size: ${fontSize};
-  height: ${props => props.height}px;
-  font-family: ${latoFont};
-  resize: none;
-  overflow: hidden;
+  background-color: ${white};
+  outline: none;
+  border: 1px solid ${outlineGray};
+  border-radius: ${radiusMd};
+  border-top-right-radius: ${radiusLg};
+  border-bottom-right-radius: ${radiusLg};
   caret-color: ${blue};
 `;
 
 const ShadowInput = styled.div`
-  border: 1px solid red;
-  background-color: red;
+  border: 1px solid black;
   position: absolute;
   width: 100%;
   left: 0;
@@ -125,7 +122,7 @@ class SendBar extends Component {
       fontSize: parseInt(fontSize),
     };
 
-    this.timeout = null;
+    this.typeTimeout = null;
     this.sendMessage = this.sendMessage.bind(this);
     this.updateMessage = this.updateMessage.bind(this);
     this.newLineHandler = this.newLineHandler.bind(this);
@@ -135,16 +132,18 @@ class SendBar extends Component {
   componentDidMount() {
     const { message } = this.state;
     this.textBox.focus();
-    const newLines = JSON.stringify(message).split(/\r\n|\r|\n/).length;
-    this.updateHeight(this.state.height + (message.length <= 0 ? 0 : this.state.fontSize * newLines));
+    this.updateHeight(this.state.height
+      + (message.length <= 0
+        ? 0
+        : this.state.fontSize * JSON.stringify(message).split(/\r\n|\r|\n/).length));
   }
 
   sendMessage(e) {
     e.preventDefault();
     const { message } = this.state;
     if (message.trim().length > 0) {
-      clearTimeout(this.timeout);
-      this.timeout = null;
+      clearTimeout(this.typeTimeout);
+      this.typeTimeout = null;
       const msg = {
         from: this.props.userId,
         data: message,
@@ -171,16 +170,16 @@ class SendBar extends Component {
   updateMessage(e) {
     const { value } = e.target;
     if (value.trim().length <= 0) {
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.timeout = null;
+      clearTimeout(this.typeTimeout);
+      this.typeTimeout = setTimeout(() => {
+        this.typeTimeout = null;
         this.props.toggleTyping(false);
       }, 500);
       this.updateHeight(this.state.defaultHeight);
-    } else if (!this.props.typing && this.timeout === null) {
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(() => {
-        this.timeout = null;
+    } else if (!this.props.typing && this.typeTimeout === null) {
+      clearTimeout(this.typeTimeout);
+      this.typeTimeout = setTimeout(() => {
+        this.typeTimeout = null;
         this.props.toggleTyping(true);
       }, 250);
     }
@@ -239,7 +238,11 @@ class SendBar extends Component {
 }
 
 SendBar.propTypes = {
+  sendMessage: PropTypes.func.isRequired,
+  toggleTyping: PropTypes.func.isRequired,
+  updateSendBarHeight: PropTypes.func.isRequired,
   typing: PropTypes.bool.isRequired,
+  userId: PropTypes.string,
 };
 
 const mapStateToProps = state => ({

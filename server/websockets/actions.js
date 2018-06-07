@@ -2,6 +2,21 @@ const WebSocket = require('ws');
 
 const CHAIN_EXPIRE = 1000 * 60;
 
+const broadcastTyping = (wss, ws, typing) => {
+  ws.typing = typing;
+  wss.clients.forEach(client => {
+    if (client.readyState === WebSocket.OPEN && client !== ws) {
+      client.send(JSON.stringify({
+        type: 'USER_TYPING',
+        payload: {
+          typing,
+          user: ws.id,
+        },
+      }));
+    }
+  });
+};
+
 module.exports = {
   sendMessage: (wss, ws, msg) => {
     msg.received_at = Date.now().toString();
@@ -10,44 +25,22 @@ module.exports = {
     ws.history.push(msg);
     wss.clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
-        client.send(
-          client === ws
-          ? JSON.stringify({
-            type: 'MESSAGE_DELIVERED',
-            payload: msg,
-          })
-          : JSON.stringify({
-            type: 'RECEIVE_MESSAGE',
-            payload: msg,
-          }));
+        client.send(JSON.stringify({
+          type: client === ws ? 'MESSAGE_DELIVERED' : 'RECEIVE_MESSAGE',
+          payload: msg,
+        }));
       }
     });
   },
   toggleTyping: (wss, ws, typing) => {
-    const broadcastData = typing => {
-      wss.clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN && client !== ws) {
-          client.send(JSON.stringify({
-            type: 'USER_TYPING',
-            payload: {
-              typing,
-              user: ws.id,
-            },
-          }));
-        }
-      });
-    };
     if (ws.typeTimeout) {
       clearTimeout(ws.typeTimeout);
       ws.typeTimeout = undefined;
     }
-    ws.typing = typing;
-    broadcastData(ws.typing);
+    broadcastTyping(wss, ws, typing);
     ws.typeTimeout = setTimeout(() => {
-      console.log(ws.typing);
       if (ws.typing) {
-        ws.typing = false;
-        broadcastData(ws.typing);
+        broadcastTyping(wss, ws, false);
       }
     }, CHAIN_EXPIRE);
   }

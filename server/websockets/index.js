@@ -3,17 +3,7 @@ const uuid = require('node-uuid');
 
 module.exports = (server) => {
   const wss = new WebSocket.Server({ server });
-
-  wss.broadcast = data => {
-    wss.clients.forEach(client => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(data);
-      }
-    });
-  };
-
-  const websocketReducer = require('./reducer');
-
+  const wsReducer = require('./reducer');
   wss.on('connection', ws => {
     ws.id = uuid.v4();
     ws.history = [];
@@ -23,12 +13,12 @@ module.exports = (server) => {
       this.isAlive = true;
     });
     ws.on('message', msg => {
-      var actions =  JSON.parse(msg);
+      var actions = JSON.parse(msg);
       if (!Array.isArray(actions)) {
         actions = [actions];
       }
       actions.forEach(action => {
-        websocketReducer(wss, ws, action);
+        wsReducer(wss, ws, action);
       });
     });
     ws.send(JSON.stringify({
@@ -39,9 +29,9 @@ module.exports = (server) => {
     }));
   })
 
+  /*
   const noop = () => {};
-
-  /*const interval = setInterval(() => {
+  const interval = setInterval(() => {
     wss.clients.forEach(ws => {
       if (ws.isAlive === false) return ws.terminate();
 
@@ -49,4 +39,12 @@ module.exports = (server) => {
       ws.ping(noop);
     });
   }, 30000);*/
+
+  wss.broadcast = data => {
+    wss.clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(data);
+      }
+    });
+  };
 }

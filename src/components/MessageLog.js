@@ -25,11 +25,11 @@ const List = styled.ul`
 `
 
 Array.prototype.omniMap = function(callback) {
-  var result = [];
-  var last = null;
-  var next = null;
+  var result = [],
+      last = null,
+      next = null;
   for (var i = 0; i < this.length; i++) {
-    next = this.length > (i + 1) ? this[i + 1] : null;
+    next = this[i + 1] || null;
     result.push(callback(i, last, this[i], next));
     last = this[i];
   }
@@ -60,7 +60,7 @@ class MessageLog extends Component {
     if (nextProps.offset !== this.state.offset || nextProps.logCount !== this.state.logCount) {
       this.setState({
         offset: nextProps.offset,
-        logCount: nextProps.logCount
+        logCount: nextProps.logCount,
       }, this.bottomScroll);
     }
   }
@@ -99,11 +99,15 @@ class MessageLog extends Component {
 }
 
 MessageLog.propTypes = {
+  receiveMessage: PropTypes.func.isRequired,
+  registerUser: PropTypes.func.isRequired,
   ws: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
   log: PropTypes.array.isRequired,
   logCount: PropTypes.number.isRequired,
   typers: PropTypes.array.isRequired,
   offset: PropTypes.number.isRequired,
+  userId: PropTypes.string,
 };
 
 const mapStateToProps = state => ({
@@ -121,4 +125,5 @@ export default connect(
   {
     receiveMessage,
     registerUser,
-  })(MessageLog);
+  },
+)(MessageLog);
