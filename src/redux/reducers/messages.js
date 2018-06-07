@@ -1,10 +1,11 @@
-import { RECEIVE_MESSAGE, SEND_MESSAGE, TOGGLE_TYPING, UPDATE_TYPERS } from 'actions/types';
+import { RECEIVE_MESSAGE, SEND_MESSAGE, TOGGLE_TYPING, UPDATE_TYPERS, UPDATE_SENDBAR_HEIGHT } from 'actions/types';
 
 const initialState = {
   log: [],
   typing: false,
   typers: new Set(),
   users: [],
+  sendbarHeight: 0,
 };
 
 export default (state = initialState, action) => {
@@ -32,6 +33,11 @@ export default (state = initialState, action) => {
         typers: state.typers,
         users: Array.from(state.typers),
       };
+    case UPDATE_SENDBAR_HEIGHT:
+      return {
+        ...state,
+        sendbarHeight: action.payload,
+      }
     default:
       return state;
   }

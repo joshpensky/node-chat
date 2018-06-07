@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
-import { sendMessage, toggleTyping } from 'actions/messages';
+import { sendMessage, toggleTyping, updateSendBarHeight } from 'actions/messages';
 import { bgGray, outlineGray, radiusMd, radiusLg, systemFont, white } from 'style/constants';
 
 const Container = styled.section`
@@ -102,6 +102,7 @@ class SendBar extends Component {
 
   componentDidMount() {
     this.textBox.focus();
+    this.props.updateSendBarHeight(this.container.offsetHeight);
   }
 
   sendMessage(e) {
@@ -174,4 +175,11 @@ const mapStateToProps = state => ({
   typing: state.messages.typing,
 })
 
-export default connect(mapStateToProps, { sendMessage, toggleTyping })(SendBar);
+export default connect(
+  mapStateToProps,
+  {
+    sendMessage,
+    toggleTyping,
+    updateSendBarHeight,
+  },
+)(SendBar);

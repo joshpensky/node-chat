@@ -1,4 +1,11 @@
-import { RECEIVE_MESSAGE, SEND_MESSAGE, TOGGLE_TYPING, UPDATE_TYPERS } from 'actions/types';
+import { RECEIVE_MESSAGE, SEND_MESSAGE, TOGGLE_TYPING, UPDATE_TYPERS, UPDATE_SENDBAR_HEIGHT } from 'actions/types';
+
+export const updateSendBarHeight = height => (dispatch, getState) => {
+  dispatch({
+    type: UPDATE_SENDBAR_HEIGHT,
+    payload: height,
+  });
+}
 
 export const sendMessage = message => (dispatch, getState) => {
   const { ws } = getState().websockets;
@@ -21,7 +28,7 @@ export const receiveMessage = message => dispatch => {
   dispatch({
     type: RECEIVE_MESSAGE,
     payload: message
-  })
+  });
 };
 
 export const toggleTyping = typing => (dispatch, getState) => {

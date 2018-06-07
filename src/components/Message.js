@@ -8,6 +8,7 @@ const Container = styled.li`
   flex-direction: column;
   width: 100%;
   align-items: flex-${props => props.clientSent ? 'end': 'start'};
+  margin-bottom: ${props => props.continuedNext ? '2px' : '6px'};
 `;
 
 const Bubble = styled.div`
@@ -27,14 +28,24 @@ const Bubble = styled.div`
   font-size: 16px;
   line-height: 18px;
   vertical-align: top;
-  margin-bottom: 2px;
+`;
+
+const SubMessage = styled.p`
+  font-size: 12px;
+  line-height: 12px;
+  color: #9f9f9f;
+  font-family: ${systemFont};
+  padding-top: 4px;
 `;
 
 class Message extends Component {
   render() {
     const { clientSent, continuedLast, continuedNext, created_at, received_at, delivered } = this.props;
     return (
-      <Container clientSent={clientSent}>
+      <Container
+        clientSent={clientSent}
+        continuedNext={continuedNext}
+        >
         <Bubble
           clientSent={clientSent}
           continuedLast={continuedLast}
@@ -42,6 +53,7 @@ class Message extends Component {
           >
           {newlineResolver(this.props.children)}
         </Bubble>
+        {(clientSent && !continuedNext) && <SubMessage>Delivered</SubMessage>}
       </Container>
     )
   }
