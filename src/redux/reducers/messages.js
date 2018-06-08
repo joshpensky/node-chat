@@ -10,6 +10,9 @@ import {
 const initialState = {
   log: [],
   history: {},
+  lastDelivered: '',
+  lastSent: '',
+  lastReceived: '',
   typing: false,
   typers: new Set(),
   sendbarHeight: 0,
@@ -24,6 +27,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         history: state.history,
+        lastDelivered: action.payload.received_at,
       };
     case RECEIVE_MESSAGE:
       var userHistory = state.history[action.payload.from] || {};
@@ -33,16 +37,17 @@ export default (state = initialState, action) => {
         ...state,
         log: [...state.log, action.payload],
         history: state.history,
+        lastReceived: action.payload.received_at,
       }
     case SEND_MESSAGE:
       var userHistory = state.history[action.payload.from] || {};
       userHistory[action.payload.created_at] = action.payload;
       state.history[action.payload.from] = userHistory;
-      console.log(state.history);
       return {
         ...state,
         log: [...state.log, action.payload],
         history: state.history,
+        lastSent: action.payload.created_at,
       }
     case TOGGLE_TYPING:
       return {

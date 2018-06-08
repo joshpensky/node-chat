@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import styled, { keyframes } from 'styled-components';
-import { black, bgGray, outlineGray, radiusMd, radiusSm, latoFont, white } from 'style/constants';
+import styled, { css, keyframes } from 'styled-components';
+import { black, blueGrayMixin, outlineGray, white } from 'style/constants';
 
 const Container = styled.div.attrs({
   className: 'type-indicator',
@@ -12,16 +12,28 @@ const Container = styled.div.attrs({
   padding: 7px 12px;
   margin-bottom: 2px;
   color: ${props => props.clientSent ? white : black};
-  background-color: ${bgGray};
+  ${blueGrayMixin(false)}
   border-radius: 17px;
   position: relative;
+  transform-origin: 10px 10px;
+  transform: scale(0);
+  margin-bottom: -32px;
+  ${props => props.hideAnim && css`
+    transition: 0.2s cubic-bezier(0.25,-0.15, 0, 1.09);
+  `}
+
+  ${props => props.show && css`
+    margin-bottom: 0;
+    transform: scale(1);
+    transition: 0.2s cubic-bezier(0.25,-0.15, 0, 1.09);
+  `}
 
   &::before {
     content: '';
     position: absolute;
     left: 0;
     bottom: 0;
-    background-color: ${bgGray};
+    ${blueGrayMixin(false)}
     border-radius: 50%;
     width: 14px;
     height: 14px;
@@ -56,9 +68,41 @@ const Dot = styled.div`
 `;
 
 class TypeIndicator extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      previous: this.props.lastReceived,
+      lastReceived: this.props.lastReceived,
+      hideAnim: true,
+      updated: false,
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.state.lastReceived !== nextProps.lastReceived) {
+      this.setState({
+        lastReceived: nextProps.lastReceived,
+        hideAnim: false,
+        updated: true,
+      })
+    } else if (this.state.lastReceived !== this.state.previous) {
+      this.setState({
+        previous: this.state.lastReceived,
+        hideAnim: true,
+      });
+    } else if (this.state.updated) {
+      this.setState({
+        updated: false,
+      })
+    }
+  }
+
   render() {
     return (
-      <Container>
+      <Container
+        show={this.props.show}
+        hideAnim={this.state.hideAnim && this.state.lastReceived === this.state.previous && !this.state.updated}
+        >
         {[0, 1, 2].map(i => (
           <Dot key={i} delay={i / 3} />
         ))}

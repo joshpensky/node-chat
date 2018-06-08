@@ -62,6 +62,8 @@ class MessageLog extends Component {
         offset: nextProps.offset,
         logCount: nextProps.logCount,
       }, this.bottomScroll);
+    } else if (nextProps.typers.length > 0) {
+      setTimeout(this.bottomScroll, 200);
     }
   }
 
@@ -70,11 +72,11 @@ class MessageLog extends Component {
   }
 
   render() {
-    const { typers } = this.props;
+    const { typers, log } = this.props;
     return (
       <Container innerRef={r => this.container = r} offset={this.props.offset}>
         <List innerRef={r => this.list = r}>
-          {this.props.log.omniMap((i, last, msg, next) => {
+          {log.omniMap((i, last, msg, next) => {
             const { data, ...metaData } = msg,
                   chainedLast = last === null ? false : last.from === msg.from && this.props.history[msg.from][msg.created_at].chained,
                   chainedNext = next === null ? false : next.from === msg.from && this.props.history[next.from][next.created_at].chained;
@@ -85,13 +87,15 @@ class MessageLog extends Component {
                 chainedLast={chainedLast}
                 chainedNext={chainedNext}
                 clientSent={msg.from === this.props.userId}
+                last={i === log.length - 1}
+                sent={msg.from === this.props.userId && !('received_at' in this.props.history[msg.from][msg.created_at])}
+                delivered={this.props.lastDelivered === this.props.history[msg.from][msg.created_at].received_at}
                 >
                 {data}
               </Message>
             );
           })}
-          {typers.length > 0 && <TypeIndicator />
-            /*`${typers.join(', ')} ${typers.length > 1 ? 'are': 'is'} typing`*/}
+          <TypeIndicator show={typers.length > 0} lastReceived={this.props.lastReceived} />
         </List>
       </Container>
     );
@@ -108,6 +112,9 @@ MessageLog.propTypes = {
   typers: PropTypes.array.isRequired,
   offset: PropTypes.number.isRequired,
   userId: PropTypes.string,
+  lastDelivered: PropTypes.string.isRequired,
+  lastSent: PropTypes.string.isRequired,
+  lastReceived: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -118,6 +125,9 @@ const mapStateToProps = state => ({
   typers: Array.from(state.messages.typers),
   offset: state.messages.sendbarHeight,
   userId: state.websockets.id,
+  lastDelivered: state.messages.lastDelivered,
+  lastSent: state.messages.lastSent,
+  lastReceived: state.messages.lastReceived,
 });
 
 export default connect(

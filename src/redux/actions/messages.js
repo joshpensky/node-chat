@@ -34,7 +34,7 @@ export const sendMessage = message => (dispatch, getState) => {
 export const receiveMessage = message => dispatch => {
   dispatch({
     type: RECEIVE_MESSAGE,
-    payload: message
+    payload: message,
   });
 };
 
@@ -42,7 +42,7 @@ export const toggleTyping = typing => (dispatch, getState) => {
   const { ws } = getState().websockets;
   const action = {
     type: TOGGLE_TYPING,
-    payload: typing
+    payload: typing,
   };
   ws.send(JSON.stringify(action), { mask: true });
   dispatch(action)

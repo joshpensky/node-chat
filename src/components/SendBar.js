@@ -190,7 +190,7 @@ class SendBar extends Component {
       if (shadowHeight !== this.state.height) {
         this.updateHeight(shadowHeight, () => {
           this.setState({
-            scrollbarPresent: this.textBox.clientHeight < this.textBox.scrollHeight
+            scrollbarPresent: this.textBox.clientHeight < this.textBox.scrollHeight,
           });
         });
       }

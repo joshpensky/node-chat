@@ -1,4 +1,4 @@
-import { CONNECT_TO_SERVER, REGISTER_USER } from 'actions/types';
+import { REGISTER_USER } from 'actions/types';
 
 const ws = new WebSocket('ws://localhost:3001');
 

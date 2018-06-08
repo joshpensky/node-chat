@@ -1,5 +1,6 @@
 const WebSocket = require('ws');
 const uuid = require('node-uuid');
+const types = require('./types');
 
 module.exports = (server) => {
   const wss = new WebSocket.Server({ server });
@@ -22,7 +23,7 @@ module.exports = (server) => {
       });
     });
     ws.send(JSON.stringify({
-      type: 'REGISTER_USER',
+      type: types.REGISTER_USER,
       payload: {
         id: ws.id,
       },

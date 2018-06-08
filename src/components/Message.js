@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import styled, { css } from 'styled-components';
-import { bgGray, black, blue, fontSize, radiusMd, radiusSm, latoFont, white } from 'style/constants';
+import { black, blueGrayMixin, fontSize, radiusMd, radiusSm, latoFont, white } from 'style/constants';
 import { newlineResolver } from 'utils';
 
 const Container = styled.li`
@@ -8,13 +8,7 @@ const Container = styled.li`
   display: flex;
   flex-direction: column;
   align-items: flex-${props => props.clientSent ? 'end': 'start'};
-  margin-bottom: ${props => props.chainedNext ? '2px' : '6px'};
-
-  ${props => !props.clientSent && css`
-    & + .type-indicator {
-      margin-top: -4px;
-    }
-  `}
+  margin-bottom: ${props => props.last ? '2px' : props.chainedNext ? '2px' : '6px'};
 `;
 
 const Wrapper = styled.div`
@@ -27,8 +21,11 @@ const Wrapper = styled.div`
 const Bubble = styled.div`
   padding: 6px 12px 8px;
   box-sizing: border-box;
-  color: ${props => props.clientSent ? white : black};
-  background-color: ${props => props.clientSent ? blue : bgGray};
+  font-family: ${latoFont};
+  font-size: ${fontSize};
+  line-height: 18px;
+  vertical-align: middle;
+  word-break: break-word;
   border-radius: ${radiusMd};
   ${props => props.chainedLast && css`
     border-top-${props => props.clientSent ? 'right': 'left'}-radius: ${radiusSm};
@@ -36,10 +33,8 @@ const Bubble = styled.div`
   ${props => props.chainedNext && css`
     border-bottom-${props => props.clientSent ? 'right': 'left'}-radius: ${radiusSm};
   `}
-  font-family: ${latoFont};
-  font-size: ${fontSize};
-  line-height: 18px;
-  vertical-align: middle;
+  ${props => blueGrayMixin(props.clientSent)}
+  color: ${props => props.clientSent ? white : black};
 `;
 
 const SubMessage = styled.p`
@@ -48,15 +43,25 @@ const SubMessage = styled.p`
   color: #9f9f9f;
   font-family: ${latoFont};
   padding-top: 4px;
+  transform-origin: 50% 50%;
+  transition: 0.2s ease-in-out;
+  transform: translateY(-6px) scale(0);
+  margin-bottom: -16px;
+
+  ${props => props.show && css`
+    margin-bottom: 0;
+    transform: translateY(0px) scale(1);
+  `}
 `;
 
 class Message extends Component {
   render() {
-    const { clientSent, chainedLast, chainedNext, created_at, received_at, delivered } = this.props;
+    const { last, clientSent, chainedLast, chainedNext, created_at, received_at, delivered, sent } = this.props;
     return (
       <Container
         clientSent={clientSent}
         chainedNext={chainedNext}
+        last={last}
         >
         <Wrapper clientSent={clientSent}>
           <Bubble
@@ -66,7 +71,7 @@ class Message extends Component {
             >
             {newlineResolver(this.props.children)}
           </Bubble>
-          {/*(clientSent && !chainedNext) && <SubMessage>Delivered</SubMessage>*/}
+          {clientSent && <SubMessage show={delivered}>Delivered</SubMessage>}
         </Wrapper>
       </Container>
     );
