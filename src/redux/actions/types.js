@@ -8,4 +8,5 @@ export const UPDATE_SENDBAR_HEIGHT = 'UPDATE_SENDBAR_HEIGHT';
 
 /* websockets */
 export const CONNECT_TO_SERVER = 'CONNECT_TO_SERVER';
+export const UPDATE_HEAD_HEIGHT = 'UPDATE_HEAD_HEIGHT';
 export const REGISTER_USER = 'REGISTER_USER';

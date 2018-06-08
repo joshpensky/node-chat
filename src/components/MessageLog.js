@@ -9,9 +9,9 @@ import { Message, TypeIndicator } from 'components';
 const Container = styled.section`
   position: absolute;
   left: 0;
-  top: 0;
+  top: ${props => props.topOffset}px;
   width: 100%;
-  height: calc(100% - ${props => props.offset}px);
+  height: calc(100% - ${props => props.bottomOffset}px - ${props => props.topOffset}px);
   overflow: auto;
 `;
 
@@ -42,7 +42,8 @@ class MessageLog extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      offset: this.props.offset,
+      topOffset: this.props.topOffset,
+      bottomOffset: this.props.bottomOffset,
       logCount: this.props.logCount,
     };
     
@@ -57,9 +58,12 @@ class MessageLog extends Component {
   }
   
   componentWillReceiveProps(nextProps) {
-    if (nextProps.offset !== this.state.offset || nextProps.logCount !== this.state.logCount) {
+    if (nextProps.topOffset !== this.state.topOffset
+      || nextProps.bottomOffset !== this.state.bottomOffset
+      || nextProps.logCount !== this.state.logCount) {
       this.setState({
-        offset: nextProps.offset,
+        topOffset: nextProps.topOffset,
+        bottomOffset: nextProps.bottomOffset,
         logCount: nextProps.logCount,
       }, this.bottomScroll);
     } else if (nextProps.typers.length > 0) {
@@ -74,7 +78,11 @@ class MessageLog extends Component {
   render() {
     const { typers, log } = this.props;
     return (
-      <Container innerRef={r => this.container = r} offset={this.props.offset}>
+      <Container
+        innerRef={r => this.container = r}
+        topOffset={this.props.topOffset}
+        bottomOffset={this.props.bottomOffset}
+        >
         <List innerRef={r => this.list = r}>
           {log.omniMap((i, last, msg, next) => {
             const { data, ...metaData } = msg,
@@ -110,7 +118,8 @@ MessageLog.propTypes = {
   log: PropTypes.array.isRequired,
   logCount: PropTypes.number.isRequired,
   typers: PropTypes.array.isRequired,
-  offset: PropTypes.number.isRequired,
+  topOffset: PropTypes.number.isRequired,
+  bottomOffset: PropTypes.number.isRequired,
   userId: PropTypes.string,
   lastDelivered: PropTypes.string.isRequired,
   lastSent: PropTypes.string.isRequired,
@@ -123,7 +132,8 @@ const mapStateToProps = state => ({
   log: state.messages.log,
   logCount: state.messages.log.length,
   typers: Array.from(state.messages.typers),
-  offset: state.messages.sendbarHeight,
+  topOffset: state.websockets.headHeight,
+  bottomOffset: state.messages.sendbarHeight,
   userId: state.websockets.id,
   lastDelivered: state.messages.lastDelivered,
   lastSent: state.messages.lastSent,

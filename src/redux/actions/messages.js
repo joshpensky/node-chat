@@ -15,15 +15,15 @@ export const updateSendBarHeight = height => (dispatch, getState) => {
 }
 
 export const sendMessage = message => (dispatch, getState) => {
-  const { ws } = getState().websockets;
+  const { ws, channel } = getState().websockets;
   if (message.data.trim().length > 0) {
     const msgAction = {
       type: SEND_MESSAGE,
-      payload: message,
+      payload: Object.assign(message, { channel }),
     };
     const typeAction = {
       type: TOGGLE_TYPING,
-      payload: false,
+      payload: { typing: false, channel },
     };
     ws.send(JSON.stringify([msgAction, typeAction]), { mask: true });
     dispatch(msgAction);
@@ -39,10 +39,10 @@ export const receiveMessage = message => dispatch => {
 };
 
 export const toggleTyping = typing => (dispatch, getState) => {
-  const { ws } = getState().websockets;
+  const { ws, channel } = getState().websockets;
   const action = {
     type: TOGGLE_TYPING,
-    payload: typing,
+    payload: { typing, channel },
   };
   ws.send(JSON.stringify(action), { mask: true });
   dispatch(action)

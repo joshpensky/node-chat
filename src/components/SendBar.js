@@ -222,7 +222,7 @@ class SendBar extends Component {
           </ShadowInput>
           <TextBox
             innerRef={r => this.textBox = r}
-            placeholder="Web Message"
+            placeholder="nMessage"
             value={message}
             onChange={this.updateMessage}
             onKeyDown={this.newLineHandler}

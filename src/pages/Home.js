@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import styled from 'styled-components';
 import { Helmet } from 'react-helmet';
-import { Message, MessageLog, SendBar } from 'components';
+import { Head, MessageLog, SendBar } from 'components';
 import { H1 } from 'style';
 
 const Container = styled.div`
@@ -19,6 +19,7 @@ class Home extends Component {
           <title>Home</title>
         </Helmet>
         <Container>
+          <Head />
           <MessageLog />
           <SendBar />
         </Container>

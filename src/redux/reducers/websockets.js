@@ -1,10 +1,12 @@
-import { REGISTER_USER } from 'actions/types';
+import { REGISTER_USER, UPDATE_HEAD_HEIGHT } from 'actions/types';
 
 const ws = new WebSocket('ws://localhost:3001');
 
 const initialState ={
   ws,
   id: null,
+  channel: '',
+  headHeight: 0,
 };
 
 export default (state = initialState, action) => {
@@ -12,7 +14,12 @@ export default (state = initialState, action) => {
     case REGISTER_USER:
       return {
         ...state,
-        id: action.payload.id
+        ...action.payload,
+      }
+    case UPDATE_HEAD_HEIGHT:
+      return {
+        ...state,
+        headHeight: action.payload,
       }
     default:
       return state;

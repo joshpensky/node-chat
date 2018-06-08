@@ -52,7 +52,7 @@ export default (state = initialState, action) => {
     case TOGGLE_TYPING:
       return {
         ...state,
-        typing: action.payload
+        typing: action.payload.typing
       }
     case UPDATE_TYPERS:
       const { typing, user } = action.payload;
