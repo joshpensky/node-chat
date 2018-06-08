@@ -6,11 +6,12 @@ require('./channels');
 module.exports = (server) => {
   const wss = new WebSocket.Server({ server });
   wss.createChannel('all');
-  wss.createChannel('not-all');
+  wss.createChannel('not-all', '(Not) the best channel on planet earth!');
   wss.counter = 0;
   
   WebSocket.prototype.join = function(channelName) {
     var joined = wss.joinChannel(this, channelName);
+    return wss.channels[channelName];
   }
 
   WebSocket.prototype.create = function(channelName) {
@@ -22,7 +23,7 @@ module.exports = (server) => {
 
   const wsReducer = require('./reducer');
   wss.on('connection', ws => {
-    const initChannel = wss.counter % 2 ? 'all' : 'not-all';
+    const channelName = wss.counter % 2 ? 'all' : 'not-all';
     wss.counter += 1;
     Object.assign(ws, {
       id: uuid.v4(),
@@ -31,7 +32,7 @@ module.exports = (server) => {
       isAlive: true,
       channels: new Set(),
     });
-    ws.join(initChannel);
+    const initChannel = ws.join(channelName);
     ws.on('ping', () => {
       this.isAlive = true;
     });
@@ -42,7 +43,7 @@ module.exports = (server) => {
       type: REGISTER_USER,
       payload: {
         id: ws.id,
-        channel: initChannel,
+        channel: initChannel.getChannelInfo(),
       },
     }));
   })

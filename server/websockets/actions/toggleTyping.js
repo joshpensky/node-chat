@@ -5,18 +5,19 @@ const { clientInChannel } = require('./utils');
 
 const broadcastTyping = (channel, ws, typing) => {
   ws.typing = typing;
-  channel.clients.forEach(client => {
-    if (client.readyState === OPEN && client !== ws) {
-      client.send(JSON.stringify({
-        type: USER_TYPING,
-        payload: {
-          typing,
-          user: ws.id,
-          channel,
-        },
-      }));
-    }
-  });
+  channel.broadcast(
+    JSON.stringify({
+      type: USER_TYPING,
+      payload: {
+        typing,
+        user: ws.id,
+        channel,
+      },
+    }),
+    false,
+    ws,
+    false,
+  );
 };
 
 module.exports = (wss, ws, msg) => {

@@ -18,6 +18,7 @@ const Container = styled.div.attrs({
   transform-origin: 10px 10px;
   transform: scale(0);
   margin-bottom: -32px;
+  
   ${props => props.hideAnim && css`
     transition: 0.2s cubic-bezier(0.25,-0.15, 0, 1.09);
   `}

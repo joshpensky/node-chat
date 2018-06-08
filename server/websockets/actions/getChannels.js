@@ -1,4 +1,7 @@
 module.exports = (wss, ws) => {
   var channelsList = Object.keys(wss.channels);
-  console.log(channelsList);
+  ws.send(JSON.stringify({
+    type: MESSAGE_DELIVERED,
+    payload: channelsList,
+  }));
 }

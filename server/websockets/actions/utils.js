@@ -3,7 +3,7 @@ module.exports = {
     if (channelName) {
       var channel = wss.channels[channelName];
       if (channel) {
-        if (channel.clients.has(ws)) {
+        if (channel.hasUser(ws)) {
           return callback(channel);
         } else {
           console.log('Client not in the given channel.');
@@ -14,5 +14,6 @@ module.exports = {
     } else {
       console.log('no channel given');
     }
+    return false;
   }
 }

@@ -5,7 +5,7 @@ const ws = new WebSocket('ws://localhost:3001');
 const initialState ={
   ws,
   id: null,
-  channel: '',
+  channel: null,
   headHeight: 0,
 };
 

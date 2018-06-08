@@ -9,16 +9,15 @@ module.exports = (wss, ws, msg) => {
     msg.from = ws.id;
     msg.chained = ws.history.length > 0 && (msg.created_at - ws.history.slice(-1)[0].created_at <= CHAIN_EXPIRE);
     ws.history.push(msg);
-    channel.history.push(msg);
-    channel.history = channel.history.slice(-128);
-    channel.clients.forEach(client => {
-      if (client.readyState === OPEN && client !== ws) {
-        client.send(JSON.stringify({
-          type: RECEIVE_MESSAGE,
-          payload: msg,
-        }));
-      }
-    });
+    channel.broadcast(
+      JSON.stringify({
+        type: RECEIVE_MESSAGE,
+        payload: msg,
+      }),
+      true,
+      ws,
+      false,
+    );
     setTimeout(() => {
       ws.send(JSON.stringify({
         type: MESSAGE_DELIVERED,

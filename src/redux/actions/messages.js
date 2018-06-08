@@ -19,11 +19,11 @@ export const sendMessage = message => (dispatch, getState) => {
   if (message.data.trim().length > 0) {
     const msgAction = {
       type: SEND_MESSAGE,
-      payload: Object.assign(message, { channel }),
+      payload: Object.assign(message, { channel: channel.name }),
     };
     const typeAction = {
       type: TOGGLE_TYPING,
-      payload: { typing: false, channel },
+      payload: { typing: false, channel: channel.name },
     };
     ws.send(JSON.stringify([msgAction, typeAction]), { mask: true });
     dispatch(msgAction);
@@ -42,7 +42,7 @@ export const toggleTyping = typing => (dispatch, getState) => {
   const { ws, channel } = getState().websockets;
   const action = {
     type: TOGGLE_TYPING,
-    payload: { typing, channel },
+    payload: { typing, channel: channel.name },
   };
   ws.send(JSON.stringify(action), { mask: true });
   dispatch(action)
